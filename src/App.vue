@@ -1,5 +1,4 @@
 <template>
-  <header>
     <div>
       <div class="actions">
         <!-- Refresh Button -->
@@ -8,7 +7,7 @@
         </button>
 
         <!-- Export Button -->
-        <button class="button-download" @click="exportToExcel">Export to Excel</button>
+        <button class="button-download" @click="exportToExcel">Export</button>
 
         <!-- Advance Search Button -->
         <button @click="toggleSearch" class="button-search">
@@ -86,7 +85,6 @@
         <button class="button-page" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
       </div>
     </div>
-  </header>
 </template>
 
 <script>
@@ -96,7 +94,6 @@ export default {
   data() {
     return {
       items: [
-        // Your table data goes here, each object in the array represents a row.
         {
           noKewajiban: 'B20116005069',
           noPolisi: 'KT 3089 LS',
@@ -289,7 +286,6 @@ export default {
           status: 'Lunas',
           checked: false
         },
-        // Add more items as necessary
       ],
       selectAll: false,
       currentPage: 1,
@@ -307,9 +303,11 @@ export default {
     };
   },
   computed: {
+    // Total Pages
     totalPages() {
       return Math.ceil(this.filteredData.length / this.itemsPerPage);
     },
+    // Pagination
     paginatedData() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
@@ -321,13 +319,11 @@ export default {
           let valueA = a[this.sortKey];
           let valueB = b[this.sortKey];
 
-          // Convert to lowercase for case-insensitive comparison (if applicable)
           if (typeof valueA === 'string') {
             valueA = valueA.toLowerCase();
             valueB = valueB.toLowerCase();
           }
 
-          // Date comparison (if applicable)
           if (this.sortKey.includes('tanggal')) {
             valueA = new Date(valueA);
             valueB = new Date(valueB);
@@ -338,6 +334,7 @@ export default {
         return 0;
       });
     },
+    // Filter Data
     filteredData() {
       return this.items.filter(item => {
         const withinPriceRange =
@@ -356,6 +353,7 @@ export default {
     },
   },
   methods: {
+    // Checkbox All
     checkAll() {
       this.items.forEach(item => {
         item.checked = this.selectAll;
@@ -363,24 +361,26 @@ export default {
     },
     sort(key) {
       if (this.sortKey === key) {
-        this.sortOrder *= -1; // Toggle sort order
+        this.sortOrder *= -1;
       } else {
-        this.sortOrder = 1;   // Default to ascending
+        this.sortOrder = 1;
       }
       this.sortKey = key;
     },
+    // Next Page
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
       }
     },
+    // Prev Page
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
       }
     },
+    // Clear filters
     refreshTable() {
-      // Clear filters
       this.searchFilters = {
         priceFrom: null,
         priceTo: null,
@@ -388,29 +388,23 @@ export default {
         dateTo: null,
         status: [],
       };
-      this.currentPage = 1; // Reset to the first page
-
-      // Optionally, re-fetch or reset data
-      this.items = this.getInitialData(); // or make an API call
+      this.currentPage = 1;
     },
+    // Toggle Search
     toggleSearch() {
       this.showSearch = !this.showSearch;
     },
     applyFilters() {
       this.currentPage = 1;
     },
+    // Download Excel
     exportToExcel() {
-      // Create a new workbook
       const wb = XLSX.utils.book_new();
-
-      // Convert the table into a worksheet
       const ws = XLSX.utils.table_to_sheet(document.getElementById('data-table'));
 
-      // Append the worksheet to the workbook
-      XLSX.utils.book_append_sheet(wb, ws, 'Table Data');
+      XLSX.utils.book_append_sheet(wb, ws, 'Daftar Piutang Unit');
 
-      // Generate Excel file and prompt user to download it
-      XLSX.writeFile(wb, 'table_data.xlsx');
+      XLSX.writeFile(wb, 'daftar_piutang_unit.xlsx');
     }
   },
 };
@@ -426,6 +420,7 @@ table {
 th, td {
   padding: 8px;
   text-align: left;
+  border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
 }
 
@@ -445,6 +440,7 @@ button {
   display: inline-block;
   font-size: 14px;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 .button-search{
